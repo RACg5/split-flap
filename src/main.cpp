@@ -6,6 +6,7 @@ SplitFlap module1 = SplitFlap( //a split flap needs a pointer to an accelStepper
     2); //zero sensor pin,
 void setup()
 {
+    module1.begin();
 }
 
 void loop()
