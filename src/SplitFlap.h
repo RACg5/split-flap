@@ -8,11 +8,15 @@
 class SplitFlap {
 public:
     AccelStepper* motor;
+    int speed;
+    int accel;
     byte zeroSensorPin;
-    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin)
+    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _speed, int _accel)
         : motor(_motor)
     {
         zeroSensorPin = _zeroSensorPin;
+        speed = _speed;
+        accel = _accel;
     }
     /**
      * @brief  call this in setup()
@@ -20,8 +24,8 @@ public:
      */
     void begin()
     {
-        motor->setMaxSpeed(200);
-        motor->setAcceleration(1000);
+        motor->setMaxSpeed(speed);
+        motor->setAcceleration(accel);
     }
     /**
      * @brief  
