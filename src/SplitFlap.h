@@ -29,11 +29,12 @@ public:
     }
     /**
      * @brief  
-     * @note   
-     * @retval 
+     * @param  flapNumber: (char) flap number to move to
+     * @retval (long) position to move to
      */
     static long flapNumberToPosition(char flapNumber)
     {
+        //TODO
     }
     /**
      * @brief  
