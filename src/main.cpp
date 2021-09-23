@@ -14,6 +14,12 @@ void setup()
 
 void loop()
 {
+    char charToShow = returnCharOnTimer();
+    if (charToShow != 0) {
+        char flapToShow = letterToFlapNumber(charToShow);
+        module1.display(flapToShow);
+    }
+
     module1.run();
 }
 
