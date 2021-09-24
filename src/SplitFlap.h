@@ -8,56 +8,68 @@
 class SplitFlap {
 public:
     AccelStepper* motor;
-    int speed;
-    int accel;
+    //variables added here can be accessed by any method in the SplitFlap class, add more as needed
+    int speedSetting;
+    int accelSetting;
     byte zeroSensorPin;
+
     SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _speed, int _accel)
         : motor(_motor)
     {
         zeroSensorPin = _zeroSensorPin;
-        speed = _speed;
-        accel = _accel;
+        speedSetting = _speed;
+        accelSetting = _accel;
     }
+
     /**
      * @brief  call this in setup()
      * @retval None
      */
     void begin()
     {
-        motor->setMaxSpeed(speed);
-        motor->setAcceleration(accel);
+        motor->setMaxSpeed(speedSetting);
+        motor->setAcceleration(accelSetting);
     }
+
     /**
-     * @brief  
+     * @brief  this function converts what number flap you want to show with a position the wheel should go to
      * @param  flapNumber: (char) flap number to move to
      * @retval (long) position to move to
      */
     static long flapNumberToPosition(char flapNumber)
     {
-        //TODO
+        //TODO: write conversion code (add variables to constructor for any settings needed)
+        return 0;
     }
+
     /**
-     * @brief  
+     * @brief  call this function to display a specific flap
+     * @note (currently unknown, but calling this more than once at a time may cause issues)
      * @param  flapNumber: (char)
      * @retval None
      */
     void display(char flapNumber)
     {
+        //TODO: write this. The wheel should always turn the same way (probably).
     }
+
     /**
      * @brief  call this in loop()
      * @retval None
      */
     void run()
     {
+        //TODO: does anything else need to go here? maybe disable the motor when not moving to save power?
         motor->run();
     }
+
     /**
      * @brief  ISRs can't be inside classes, so make an ISR that calls this
      * @retval None
      */
     void interruptCallback()
     {
+        //TODO: this gets called when the hall sensor interrupt runs, use that info for zeroing
     }
 
     /**
@@ -65,7 +77,7 @@ public:
      */
     void setUpInterrupts(void (*_isrPointer)(void))
     {
-        pinMode(zeroSensorPin, INPUT);
+        pinMode(zeroSensorPin, INPUT); //TODO: change to INPUT_PULLUP if we decide not to add external resistor
 
         attachInterrupt(digitalPinToInterrupt(zeroSensorPin), _isrPointer, CHANGE);
     }
