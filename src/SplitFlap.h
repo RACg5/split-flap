@@ -12,13 +12,15 @@ public:
     int speedSetting;
     int accelSetting;
     byte zeroSensorPin;
+    int stepsPerRev;
 
-    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _speed, int _accel)
+    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel)
         : motor(_motor)
     {
         zeroSensorPin = _zeroSensorPin;
         speedSetting = _speed;
         accelSetting = _accel;
+        stepsPerRev = _stepsPerRev;
     }
 
     /**
@@ -29,6 +31,7 @@ public:
     {
         motor->setMaxSpeed(speedSetting);
         motor->setAcceleration(accelSetting);
+        //TODO: the wheel needs to be moved so it gets zeroed on startup
     }
 
     /**
@@ -38,7 +41,8 @@ public:
      */
     static long flapNumberToPosition(char flapNumber)
     {
-        //TODO: write conversion code (add variables to constructor for any settings needed)
+        //TODO: write conversion formula (add variables to constructor for any settings needed)
+        //        assume the zero point is known and doesn't move, but don't assume the zero point is exactly next to a flap
         return 0;
     }
 
@@ -51,6 +55,7 @@ public:
     void display(char flapNumber)
     {
         //TODO: write this. The wheel should always turn the same way (probably).
+        //      and maybe don't do anything if the initial zeroing hasn't been completed or a move is in progress?
     }
 
     /**
@@ -60,7 +65,7 @@ public:
     void run()
     {
         //TODO: does anything else need to go here? maybe disable the motor when not moving to save power?
-        motor->run();
+        motor->run(); //runs AccelStepper motor, note -> not . because motor is a pointer not an object
     }
 
     /**
