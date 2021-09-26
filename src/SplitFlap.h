@@ -60,7 +60,7 @@ public:
      */
     long flapNumberToPosition(char flapNumber)
     {
-        return stepsPerRev / numberOfFlaps + zeroPositionOffset;
+        return flapNumber * stepsPerRev / numberOfFlaps + zeroPositionOffset;
     }
 
     /**
