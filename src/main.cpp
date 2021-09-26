@@ -10,7 +10,7 @@ SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper
     2, 2038, 200, 400); //zero sensor pin, speed, accel
 SF_MAKE_ISR_MACRO(module0); //create interrupt service routine
 
-char lettersToShow[numLetters] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+char lettersToShow[numLetters];
 
 void setup()
 {
