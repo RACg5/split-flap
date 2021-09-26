@@ -5,22 +5,29 @@
     void name##_SF_ISR() { name.interruptCallback(); } //this macro helps with setting up interrupts
 
 #include <AccelStepper.h>
-class SplitFlap {
+class SplitFlap
+{
 public:
-    AccelStepper* motor;
+    AccelStepper *motor;
     //variables added here can be accessed by any method in the SplitFlap class, add more as needed
     int speedSetting;
     int accelSetting;
     byte zeroSensorPin;
     int stepsPerRev;
+    long zeroPosition;
+    int numberOfFlaps;
+    int zeroPositionOffset;
 
-    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel)
+    SplitFlap(AccelStepper *_motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel, int _numberOfFlaps, int _zeroPositionOffset)
         : motor(_motor)
     {
         zeroSensorPin = _zeroSensorPin;
         speedSetting = _speed;
         accelSetting = _accel;
         stepsPerRev = _stepsPerRev;
+        zeroPosition = 0;
+        numberOfFlaps = _numberOfFlaps;
+        zeroPositionOffset = _zeroPositionOffset;
     }
 
     /**
@@ -34,6 +41,18 @@ public:
         //TODO: the wheel needs to be moved so it gets zeroed on startup (maybe that job is done in run() though)
     }
 
+    long calculateMove(long target)
+    {
+        if (target < motor->currentPosition() - zeroPosition)
+        {
+            return target - (motor->currentPosition() - zeroPosition) + stepsPerRev;
+        }
+        else
+        {
+            return target + (motor->currentPosition() - zeroPosition);
+        }
+    }
+
     /**
      * @brief  this function converts what number flap you want to show with a position the wheel should go to
      * @param  flapNumber: (char) flap number to move to
@@ -43,7 +62,8 @@ public:
     {
         //TODO: write conversion formula (add variables to constructor for any settings needed)
         //        assume the zero point is known and doesn't move, but don't assume the zero point is exactly next to a flap
-        return 0;
+
+        return stepsPerRev / numberOfFlaps + zeroPositionOffset;
     }
 
     /**
@@ -56,6 +76,11 @@ public:
     {
         //TODO: write this. The wheel should always turn the same way (probably).
         //      and maybe don't do anything if the initial zeroing hasn't been completed or a move is in progress?
+
+        long target = flapNumberToPosition(flapNumber); // compared to zero
+        long positionToMoveTo = calculateMove(target);
+
+        motor->moveTo(positionToMoveTo);
     }
 
     /**
@@ -75,6 +100,7 @@ public:
     void interruptCallback()
     {
         //TODO: this gets called when the hall sensor interrupt runs, use that info for zeroing
+        zeroPosition = motor->currentPosition();
     }
 
     /**
@@ -84,7 +110,7 @@ public:
     {
         pinMode(zeroSensorPin, INPUT); //TODO: change to INPUT_PULLUP if we decide not to add external resistor
 
-        attachInterrupt(digitalPinToInterrupt(zeroSensorPin), _isrPointer, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(zeroSensorPin), _isrPointer, FALLING);
     }
 };
 
