@@ -2,7 +2,7 @@
 #define _SPLIT_FLAP_H_
 
 #define SF_MAKE_ISR_MACRO(name) \
-    void name##_SF_ISR() { name.interruptCallback(); } //helps with setting up interrupts
+    void name##_SF_ISR() { name.interruptCallback(); } //this macro helps with setting up interrupts
 
 #include <AccelStepper.h>
 class SplitFlap {
@@ -27,11 +27,11 @@ public:
      * @brief  call this in setup()
      * @retval None
      */
-    void begin()
+    void begin() //write code in here like it's in setup()
     {
         motor->setMaxSpeed(speedSetting);
         motor->setAcceleration(accelSetting);
-        //TODO: the wheel needs to be moved so it gets zeroed on startup
+        //TODO: the wheel needs to be moved so it gets zeroed on startup (maybe that job is done in run() though)
     }
 
     /**
@@ -39,7 +39,7 @@ public:
      * @param  flapNumber: (char) flap number to move to
      * @retval (long) position to move to
      */
-    static long flapNumberToPosition(char flapNumber)
+    long flapNumberToPosition(char flapNumber)
     {
         //TODO: write conversion formula (add variables to constructor for any settings needed)
         //        assume the zero point is known and doesn't move, but don't assume the zero point is exactly next to a flap
@@ -62,7 +62,7 @@ public:
      * @brief  call this in loop()
      * @retval None
      */
-    void run()
+    void run() //write code in here like it's in loop()
     {
         //TODO: does anything else need to go here? maybe disable the motor when not moving to save power?
         motor->run(); //runs AccelStepper motor, note -> not . because motor is a pointer not an object
