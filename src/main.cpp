@@ -2,21 +2,28 @@
 #include <AccelStepper.h> //https://github.com/waspinator/AccelStepper, reference: http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html
 #include <Arduino.h>
 
-AccelStepper module1motor = AccelStepper(AccelStepper::FULL4WIRE, 3, 4, 5, 6);
-SplitFlap module1 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
-    &module1motor, //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
-    2, 2038, 200, 400); //zero sensor pin, speed, accel
-SF_MAKE_ISR_MACRO(module1); //create interrupt service routine
+#define numLetters 8 //how many letters are expected over serial or in timed array
 
-char lettersToShow[] = { ' ', ' ' };
+AccelStepper module0motor = AccelStepper(AccelStepper::FULL4WIRE, 3, 4, 5, 6);
+SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
+    &module0motor, //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
+    2, 2038, 200, 400); //zero sensor pin, speed, accel
+SF_MAKE_ISR_MACRO(module0); //create interrupt service routine
+
+char lettersToShow[numLetters] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
 
 void setup()
 {
     Serial.begin(115200);
-    module1.begin();
-    module1.setUpInterrupts(module1_SF_ISR);
+    module0.begin();
+    module0.setUpInterrupts(module0_SF_ISR);
 }
 
+/**
+ * @brief  convert character to flap number
+ * @param  letter: (char)
+ * @retval (char)
+ */
 char letterToFlapNumber(char letter)
 {
     //TODO: update once stickers are on flaps, verify the letter exists too.
@@ -26,43 +33,76 @@ char letterToFlapNumber(char letter)
 /**
  * @brief  this function reads characters from the serial port
  * @param  out: pointer to char array to put characters to display in
- * @param  start: within the received string, the first character that gets displayed
- * @param  end: within the received string, the last character that gets displayed
- * @note (example1: start=0 end=0 gets the first character) (example2: start=1 end=2 gets the second and third character) end-start+1 must equal the size of lettersToShow
  * @retval (bool) true if new characters are ready to be displayed
  */
-bool runSerialComm(char* out, char start, char end)
+bool runSerialComm(char* out)
 {
-    static char serialIn[] = { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0' }; //8 characters
-    static byte serialCounter = 0;
+    static char serialIn[8];
+    static int serialCounter = 0;
 
     char c = Serial.read();
-    if (c == -1)
+    if (c == -1) //nothing in serial queue
         return false;
     if (c == '\n') { //end of string
-        if (serialCounter <= end) {
+        if (serialCounter != numLetters) {
             serialCounter = 0;
-            return false; //not enough characters were received
+            return false; //wrong number of characters were received!
         }
-        for (int i = start; i <= end; i++) { //copy characters to display to output array
-            out[i - start] = serialIn[i];
+        for (int i = 0; i < numLetters; i++) { //copy characters to display to output array
+            out[i] = serialIn[i];
         }
         serialCounter = 0;
-        return true;
+        return true; //got a new string to display
     } else { //not end of string yet, read characters into array
-        serialIn[serialCounter] = c;
+        if (serialCounter < numLetters) //don't go past the end of serialIn array
+            serialIn[serialCounter] = c;
         serialCounter++;
-        if (serialCounter >= 8) //don't go past the end of serialIn array
-            serialCounter = 7;
     }
     return false; //not at end of string yet
 }
 
+/**
+ * @brief  go through the rows of a table of characters on a timed interval
+ * @param  out: pointer to char array to put characters to display in
+ * @param  numLines: how many rows are in strings
+ * @param  strings[][numLetters]: table of characters to go through
+ * @param  interval: milliseconds between sets
+ * @retval (bool) true if new characters were put in out
+ */
+bool timedLetters(char* out, int numLines, char strings[][numLetters], unsigned long interval)
+{
+    static unsigned long lastSentLetterMillis = 0;
+    static int currentLine = 0;
+    if (millis() - lastSentLetterMillis > interval) {
+        for (int i = 0; i < numLetters; i++) { //copy characters to display to output array
+            out[i] = strings[currentLine][i];
+        }
+        currentLine++;
+        if (currentLine >= numLines)
+            currentLine = 0; // restart from beginning
+        lastSentLetterMillis = millis();
+        return true;
+    }
+    return false; //not ready yet
+}
+
 void loop()
 {
-    if (runSerialComm(lettersToShow, 0, 0)) {
-        module1.display(letterToFlapNumber(lettersToShow[0]));
+    // static char linesToDisplay[][numLetters] = {
+    //     { '1', '2', '3', '4', '5', '6', '7', '8' },
+    //     { '8', '7', '6', '5', '4', '3', '2', '1' },
+    //     { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }
+    // };
+    // if (timedLetters(lettersToShow, 3, linesToDisplay, 20000)) {
+    //     Serial.println(lettersToShow);
+    //     module0.display(letterToFlapNumber(lettersToShow[0]));
+    // }
+
+    if (runSerialComm(lettersToShow)) {
+        char flapNumberToDisplay;
+        flapNumberToDisplay = letterToFlapNumber(lettersToShow[0]);
+        module0.display(flapNumberToDisplay);
     }
 
-    module1.run();
+    module0.run();
 }
