@@ -60,9 +60,6 @@ public:
      */
     long flapNumberToPosition(char flapNumber)
     {
-        //TODO: write conversion formula (add variables to constructor for any settings needed)
-        //        assume the zero point is known and doesn't move, but don't assume the zero point is exactly next to a flap
-
         return stepsPerRev / numberOfFlaps + zeroPositionOffset;
     }
 
@@ -74,8 +71,7 @@ public:
      */
     void display(char flapNumber)
     {
-        //TODO: write this. The wheel should always turn the same way (probably).
-        //      and maybe don't do anything if the initial zeroing hasn't been completed or a move is in progress?
+        //TODO:    and maybe don't do anything if the initial zeroing hasn't been completed or a move is in progress?
 
         long target = flapNumberToPosition(flapNumber); // compared to zero
         long positionToMoveTo = calculateMove(target);
@@ -99,7 +95,7 @@ public:
      */
     void interruptCallback()
     {
-        //TODO: this gets called when the hall sensor interrupt runs, use that info for zeroing
+        //this gets called when the hall sensor interrupt runs, use that info for zeroing
         zeroPosition = motor->currentPosition();
     }
 
@@ -108,7 +104,7 @@ public:
      */
     void setUpInterrupts(void (*_isrPointer)(void))
     {
-        pinMode(zeroSensorPin, INPUT); //TODO: change to INPUT_PULLUP if we decide not to add external resistor
+        pinMode(zeroSensorPin, INPUT_PULLUP); //uses internal pullup resistor, switch to INPUT if external resistor used
 
         attachInterrupt(digitalPinToInterrupt(zeroSensorPin), _isrPointer, FALLING);
     }
