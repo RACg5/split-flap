@@ -2,12 +2,12 @@
 #include <AccelStepper.h> //https://github.com/waspinator/AccelStepper, reference: http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html
 #include <Arduino.h>
 
-#define numLetters 8 //how many letters are expected over serial or in timed array
+#define numLetters 1 //how many letters are expected over serial or in timed array
 
 AccelStepper module0motor = AccelStepper(AccelStepper::FULL4WIRE, 3, 4, 5, 6);
 SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
     &module0motor,             //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
-    2, 2038, 200, 400, 50, 0); //zero sensor pin, speed, accel, numberOfFlaps, zeroPositionOffset
+    2, 2038, 200, 400, 50, 0); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
 SF_MAKE_ISR_MACRO(module0);    //create interrupt service routine
 
 char lettersToShow[numLetters];

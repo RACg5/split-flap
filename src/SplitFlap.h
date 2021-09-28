@@ -14,7 +14,7 @@ public:
     int accelSetting;
     byte zeroSensorPin;
     int stepsPerRev;
-    long zeroPosition;
+    volatile long zeroPosition;
     int numberOfFlaps;
     int zeroPositionOffset;
 
@@ -45,22 +45,24 @@ public:
     {
         if (target < motor->currentPosition() - zeroPosition)
         {
-            return target - (motor->currentPosition() - zeroPosition) + stepsPerRev;
+            // return target - (motor->currentPosition() - zeroPosition) + stepsPerRev;
+            return target + zeroPosition + stepsPerRev;
         }
         else
         {
-            return target + (motor->currentPosition() - zeroPosition);
+            // return target - (motor->currentPosition() - zeroPosition);
+            return target + zeroPosition;
         }
     }
 
-    /**
+    /**()
      * @brief  this function converts what number flap you want to show with a position the wheel should go to
      * @param  flapNumber: (char) flap number to move to
      * @retval (long) position to move to
      */
     long flapNumberToPosition(char flapNumber)
     {
-        return flapNumber * stepsPerRev / numberOfFlaps + zeroPositionOffset;
+        return ((long)flapNumber) * stepsPerRev / numberOfFlaps + zeroPositionOffset;
     }
 
     /**
@@ -76,6 +78,22 @@ public:
         long target = flapNumberToPosition(flapNumber); // compared to zero
         long positionToMoveTo = calculateMove(target);
 
+        // Serial.print("FLAP NUMBER ");
+        // Serial.println((int)flapNumber);
+
+        // Serial.print("TARGET ");
+        // Serial.println(target);
+
+        // Serial.print("POSITION ");
+        // Serial.println(positionToMoveTo);
+
+        // Serial.print("ZERO POSITION ");
+        // Serial.println(zeroPosition);
+
+        // Serial.print("CURR POSITION ");
+        // Serial.println(motor->currentPosition());
+        // Serial.println();
+
         motor->moveTo(positionToMoveTo);
     }
 
@@ -87,6 +105,8 @@ public:
     {
         //TODO: does anything else need to go here? maybe disable the motor when not moving to save power?
         motor->run(); //runs AccelStepper motor, note -> not . because motor is a pointer not an object
+
+        // Serial.println(digitalRead(zeroSensorPin));
     }
 
     /**
@@ -97,6 +117,7 @@ public:
     {
         //this gets called when the hall sensor interrupt runs, use that info for zeroing
         zeroPosition = motor->currentPosition();
+        // Serial.println("INTERRUPT");
     }
 
     /**
