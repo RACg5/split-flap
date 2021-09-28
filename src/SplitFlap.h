@@ -5,9 +5,10 @@
     void name##_SF_ISR() { name.interruptCallback(); } //this macro helps with setting up interrupts
 
 #include <AccelStepper.h>
-class SplitFlap {
+class SplitFlap
+{
 public:
-    AccelStepper* motor;
+    AccelStepper *motor;
     //variables added here can be accessed by any method in the SplitFlap class, add more as needed
     int speedSetting;
     int accelSetting;
@@ -17,7 +18,7 @@ public:
     int numberOfFlaps;
     int zeroPositionOffset;
 
-    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel, int _numberOfFlaps, int _zeroPositionOffset)
+    SplitFlap(AccelStepper *_motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel, int _numberOfFlaps, int _zeroPositionOffset)
         : motor(_motor)
     {
         zeroSensorPin = _zeroSensorPin;
@@ -39,14 +40,17 @@ public:
         motor->setAcceleration(accelSetting);
 
         motor->runToNewPosition(stepsPerRev); //move to find zero
-        display(0); //move to zero position
+        display(0);                           //move to zero position
     }
 
     long calculateMove(long target)
     {
-        if (target < motor->currentPosition() - zeroPosition) {
+        if (target < motor->currentPosition() - zeroPosition)
+        {
             return target + zeroPosition + stepsPerRev;
-        } else {
+        }
+        else
+        {
             return target + zeroPosition;
         }
     }
@@ -72,21 +76,21 @@ public:
         long target = flapNumberToPosition(flapNumber); // compared to zero
         long positionToMoveTo = calculateMove(target);
 
-        // Serial.print("FLAP NUMBER ");
-        // Serial.println((int)flapNumber);
+        Serial.print("FLAP NUMBER ");
+        Serial.println((int)flapNumber);
 
-        // Serial.print("TARGET ");
-        // Serial.println(target);
+        Serial.print("TARGET ");
+        Serial.println(target);
 
-        // Serial.print("POSITION ");
-        // Serial.println(positionToMoveTo);
+        Serial.print("POSITION ");
+        Serial.println(positionToMoveTo);
 
-        // Serial.print("ZERO POSITION ");
-        // Serial.println(zeroPosition);
+        Serial.print("ZERO POSITION ");
+        Serial.println(zeroPosition);
 
-        // Serial.print("CURR POSITION ");
-        // Serial.println(motor->currentPosition());
-        // Serial.println();
+        Serial.print("CURR POSITION ");
+        Serial.println(motor->currentPosition());
+        Serial.println();
 
         motor->moveTo(positionToMoveTo);
     }
@@ -99,7 +103,7 @@ public:
     {
         //TODO: does anything else need to go here? maybe disable the motor when not moving to save power?
         motor->run(); //runs AccelStepper motor, note -> not . because motor is a pointer not an object
-
+        digitalWrite(13, digitalRead(zeroSensorPin));
         // Serial.println(digitalRead(zeroSensorPin));
     }
 
