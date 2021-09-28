@@ -5,10 +5,9 @@
     void name##_SF_ISR() { name.interruptCallback(); } //this macro helps with setting up interrupts
 
 #include <AccelStepper.h>
-class SplitFlap
-{
+class SplitFlap {
 public:
-    AccelStepper *motor;
+    AccelStepper* motor;
     //variables added here can be accessed by any method in the SplitFlap class, add more as needed
     int speedSetting;
     int accelSetting;
@@ -18,7 +17,7 @@ public:
     int numberOfFlaps;
     int zeroPositionOffset;
 
-    SplitFlap(AccelStepper *_motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel, int _numberOfFlaps, int _zeroPositionOffset)
+    SplitFlap(AccelStepper* _motor, byte _zeroSensorPin, int _stepsPerRev, int _speed, int _accel, int _numberOfFlaps, int _zeroPositionOffset)
         : motor(_motor)
     {
         zeroSensorPin = _zeroSensorPin;
@@ -38,31 +37,28 @@ public:
     {
         motor->setMaxSpeed(speedSetting);
         motor->setAcceleration(accelSetting);
-        //TODO: the wheel needs to be moved so it gets zeroed on startup (maybe that job is done in run() though)
+
+        motor->runToNewPosition(stepsPerRev); //move to find zero
+        display(0); //move to zero position
     }
 
     long calculateMove(long target)
     {
-        if (target < motor->currentPosition() - zeroPosition)
-        {
-            // return target - (motor->currentPosition() - zeroPosition) + stepsPerRev;
+        if (target < motor->currentPosition() - zeroPosition) {
             return target + zeroPosition + stepsPerRev;
-        }
-        else
-        {
-            // return target - (motor->currentPosition() - zeroPosition);
+        } else {
             return target + zeroPosition;
         }
     }
 
-    /**()
+    /**
      * @brief  this function converts what number flap you want to show with a position the wheel should go to
      * @param  flapNumber: (char) flap number to move to
      * @retval (long) position to move to
      */
     long flapNumberToPosition(char flapNumber)
     {
-        return ((long)flapNumber) * stepsPerRev / numberOfFlaps + zeroPositionOffset;
+        return (long)flapNumber * stepsPerRev / numberOfFlaps + zeroPositionOffset;
     }
 
     /**
@@ -73,8 +69,6 @@ public:
      */
     void display(char flapNumber)
     {
-        //TODO:    and maybe don't do anything if the initial zeroing hasn't been completed or a move is in progress?
-
         long target = flapNumberToPosition(flapNumber); // compared to zero
         long positionToMoveTo = calculateMove(target);
 
@@ -115,9 +109,8 @@ public:
      */
     void interruptCallback()
     {
-        //this gets called when the hall sensor interrupt runs, use that info for zeroing
-        zeroPosition = motor->currentPosition();
-        // Serial.println("INTERRUPT");
+        //this gets called when the hall sensor interrupt runs
+        zeroPosition = motor->currentPosition(); //save a new zero position
     }
 
     /**
