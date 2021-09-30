@@ -7,7 +7,7 @@
 AccelStepper module0motor = AccelStepper(AccelStepper::FULL4WIRE, 3, 4, 5, 6);
 SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
     &module0motor,             //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
-    2, 2038, 500, 400, 50, 0); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
+    2, 2038, 500, 400, 50, 160); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
 SF_MAKE_ISR_MACRO(module0);    //create interrupt service routine
 
 char lettersToShow[numLetters];
@@ -107,6 +107,8 @@ void loop()
 
     if (runSerialComm(lettersToShow))
     {
+        Serial.print("LETTER ");
+        Serial.println(lettersToShow[0]);
         char flapNumberToDisplay = letterToFlapNumber(lettersToShow[0]);
         module0.display(flapNumberToDisplay);
     }
