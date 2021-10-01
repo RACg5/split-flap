@@ -53,10 +53,10 @@ public:
 
     /**
      * @brief  this function converts what number flap you want to show with a position the wheel should go to
-     * @param  flapNumber: (char) flap number to move to
+     * @param  flapNumber: (int) flap number to move to
      * @retval (long) position to move to
      */
-    long flapNumberToPosition(char flapNumber)
+    long flapNumberToPosition(int flapNumber)
     {
         return (long)flapNumber * stepsPerRev / numberOfFlaps + zeroPositionOffset;
     }
@@ -64,10 +64,10 @@ public:
     /**
      * @brief  call this function to display a specific flap
      * @note (currently unknown, but calling this more than once at a time may cause issues)
-     * @param  flapNumber: (char)
+     * @param  flapNumber: (int)
      * @retval None
      */
-    void display(char flapNumber)
+    void display(int flapNumber)
     {
         long target = flapNumberToPosition(flapNumber); // compared to zero
         long positionToMoveTo = calculateMove(target);

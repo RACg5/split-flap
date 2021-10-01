@@ -46,7 +46,9 @@ char letterToFlapNumber(char letter)
 
 /**
  * @brief  this function reads characters from the serial port
+ * @note  a \n (newline) character is expected to mark the end of the string
  * @param  out: pointer to char array to put characters to display in
+ * @param  checkLength: (bool) true = reject if length not numLetters
  * @retval (bool) true if new characters are ready to be displayed
  */
 bool runSerialComm(char* out, bool checkLength)
@@ -105,6 +107,7 @@ bool timedLines(char* out, int numLines, char strings[][numLetters], unsigned lo
 
 /**
  * @brief  cycle through string on a timer
+ * @note  The end of the string should be indicated with a null character
  * @param  out: (char*) pointer to char to put character in
  * @param  string[numLetters]: char array to cycle through
  * @param  interval: (unsigned long) minimum time to pause between letters
