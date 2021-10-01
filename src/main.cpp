@@ -37,10 +37,10 @@ char letterToFlapNumber(char letter)
     if (letter == 32)
         return 0; //space
     if (letter >= 65 && letter <= 90) {
-        return letter - 65 + 1; //A=1, B=2
+        return letter - 'A' + 1; //A=1, B=2
     }
     if (letter >= 97 && letter <= 122)
-        return letter - 97 + 1; //a=1, b=2
+        return letter - 'a' + 1; //a=1, b=2
     return 0; //not a valid character, show blank flap
 }
 
