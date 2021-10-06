@@ -9,7 +9,7 @@
 // #define SERIAL_LINE_BY_LINE //send characters one at a time (or multiple at a time if more than one display is connected)
 // #define TIMED_LINES //cycle through preprogrammed lines of characters to display
 
-AccelStepper module0motor = AccelStepper(AccelStepper::FULL4WIRE, 3, 4, 5, 6);
+AccelStepper module0motor = AccelStepper(AccelStepper::DRIVER, 4, 3); //step pin, direction pin
 SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
     &module0motor, //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
     2, 2038, 500, 400, 50, 160); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
