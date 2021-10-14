@@ -12,7 +12,7 @@
 AccelStepper module0motor = AccelStepper(AccelStepper::DRIVER, 4, 3); //step pin, direction pin
 SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
     &module0motor, //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
-    2, 2038, 500, 400, 50, 160); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
+    2, 200, 200, 100, 50, 0); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
 SF_MAKE_ISR_MACRO(module0); //create interrupt service routine
 
 char lettersToShow[numLetters];
@@ -21,6 +21,7 @@ int currentLetter = 0;
 
 void setup()
 {
+    pinMode(13, OUTPUT); //for testing hall effect sensor
     Serial.begin(115200);
     module0.setUpInterrupts(module0_SF_ISR);
     module0.begin();
