@@ -100,7 +100,7 @@ public:
     {
         //TODO: does anything else need to go here? maybe disable the motor when not moving to save power?
         motor->run(); //runs AccelStepper motor, note -> not . because motor is a pointer not an object
-        digitalWrite(13, digitalRead(zeroSensorPin)); //for testing hall effect sensor
+        digitalWrite(13, !digitalRead(zeroSensorPin)); //for testing hall effect sensor
         // Serial.println(digitalRead(zeroSensorPin)); //for testing hall effect sensor
     }
 
