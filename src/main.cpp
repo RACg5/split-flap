@@ -2,17 +2,17 @@
 #include <AccelStepper.h> //https://github.com/waspinator/AccelStepper, reference: http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html
 #include <Arduino.h>
 
-#define numLetters 20 //how many letters are expected over serial or in timed array
+#define numLetters 9 //how many letters are expected over serial or in timed array
 
 //warning: uncomment only one of the following!
-#define SERIAL_STRING //send a string of characters to display sequentially on a timer
-// #define SERIAL_LINE_BY_LINE //send characters one at a time (or multiple at a time if more than one display is connected)
-// #define TIMED_LINES //cycle through preprogrammed lines of characters to display
+//#define SERIAL_STRING //send a string of characters to display sequentially on a timer
+//#define SERIAL_LINE_BY_LINE //send characters one at a time (or multiple at a time if more than one display is connected)
+#define TIMED_LINES //cycle through preprogrammed lines of characters to display
 
 AccelStepper module0motor = AccelStepper(AccelStepper::DRIVER, 4, 3); //step pin, direction pin
 SplitFlap module0 = SplitFlap( //a split flap needs a pointer to an accelStepper and pins and info
     &module0motor, //https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html#a3bc75bd6571b98a6177838ca81ac39ab
-    2, 200, 200, 100, 50, 0); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
+    2, 200, 100, 100, 50, 146); //zero sensor pin, stepsPerRev, speed, accel, numberOfFlaps, zeroPositionOffset
 SF_MAKE_ISR_MACRO(module0); //create interrupt service routine
 
 char lettersToShow[numLetters];
@@ -153,12 +153,17 @@ void loop()
 
 #ifdef TIMED_LINES
     static char linesToDisplay[][numLetters] = {
-        { 'A', '2', '3', '4', '5', '6', '7', '8' },
-        { 'C', '7', '6', '5', '4', '3', '2', '1' },
-        { 'B', 'b', 'c', 'd', 'e', 'f', 'g', 'h' },
-        { '@', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }
+        { ' ' },
+        { 'T' },
+        { 'E' },
+        { 'S' },
+        { 'T' },
+        { ' ' },
+        { 'A' },
+        { 'B' },
+        { 'C' },
     };
-    if (timedLines(lettersToShow, 4, linesToDisplay, 9000)) {
+    if (timedLines(lettersToShow, 9, linesToDisplay, 9000)) {
         // Serial.print("LETTERS ");
         Serial.println(lettersToShow);
         module0.display(letterToFlapNumber(lettersToShow[0]));

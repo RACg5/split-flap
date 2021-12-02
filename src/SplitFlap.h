@@ -72,22 +72,22 @@ public:
         long target = flapNumberToPosition(flapNumber); // compared to zero
         long positionToMoveTo = calculateMove(target);
 
-        // info for debugging
-        // Serial.print("FLAP NUMBER ");
-        // Serial.println((int)flapNumber);
+        // // info for debugging
+        Serial.print("FLAP NUMBER ");
+        Serial.println((int)flapNumber);
 
-        // Serial.print("TARGET ");
-        // Serial.println(target);
+        Serial.print("TARGET ");
+        Serial.println(target);
 
-        // Serial.print("POSITION ");
-        // Serial.println(positionToMoveTo);
+        Serial.print("POSITION ");
+        Serial.println(positionToMoveTo);
 
-        // Serial.print("ZERO POSITION ");
-        // Serial.println(zeroPosition);
+        Serial.print("ZERO POSITION ");
+        Serial.println(zeroPosition);
 
-        // Serial.print("CURR POSITION ");
-        // Serial.println(motor->currentPosition());
-        // Serial.println();
+        Serial.print("CURR POSITION ");
+        Serial.println(motor->currentPosition());
+        Serial.println();
 
         motor->moveTo(positionToMoveTo);
     }
